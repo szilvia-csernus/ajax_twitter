@@ -9,23 +9,19 @@
 
 const APIUtil = {
     
-    followUser: (id, success, error) => {
+    followUser: id => {
         $.ajax({
             method: 'POST',
             url: `/users/${id}/follow`,
-            dataType: 'json',
-            success,
-            error
+            dataType: 'json'
         })
     },
 
-    unfollowUser: (id, success, error) => {
+    unfollowUser: id => {
         $.ajax({
             method: 'DELETE',
             url: `/users/${id}/follow`,
-            dataType: 'json',
-            success,
-            error
+            dataType: 'json'
         })
     },
 
@@ -56,21 +52,21 @@ class FollowToggle {
     render() {
         switch (this.followState) {
             case 'followed':
-                this.$el.prop('disabled', false);
+                // this.$el.prop('disabled', false);
                 this.$el.html('Unfollow!');
                 break;
             case 'unfollowed':
-                this.$el.prop('disabled', false);
+                // this.$el.prop('disabled', false);
                 this.$el.html('Follow!');
                 break;
-            case 'following':
-                this.$el.prop('disabled', true);
-                this.$el.html('Following...');
-                break;
-            case 'unfollowing':
-                this.$el.prop('disabled', true);
-                this.$el.html('Unfollowing...');
-                break;
+            // case 'following':
+                // this.$el.prop('disabled', true);
+                // this.$el.html('Following...');
+                // break;
+            // case 'unfollowing':
+                // this.$el.prop('disabled', true);
+                // this.$el.html('Unfollowing...');
+                // break;
         }
     }
 
@@ -90,30 +86,22 @@ class FollowToggle {
         const followToggle = this;
 
         if (this.followState === "unfollowed") {
-            //this.followState = 'following';
-            //this.render();
+            // this.followState = 'following';
+            // this.render();
 
-            APIUtil.followUser(this.userId, this.fetchSuccess.bind(this), this.fetchError.bind(this))
-            // $.ajax({
-            //     type: 'POST',
-            //     url: `/users/${this.userId}/follow`,
-            //     dataType: 'json',
-            //     success: this.fetchSuccess.bind(this),
-            //     error: this.fetchError.bind(this)
-            // })
+            $.when(APIUtil.followUser(this.userId))
+            .then(this.fetchSuccess.bind(this))
+            .fail(this.fetchError.bind(this));
+
 
         } else {
-            //this.followState = 'unfollowing';
-            //this.render();
+            // this.followState = 'unfollowing';
+            // this.render();
 
-            APIUtil.unfollowUser(this.userId, this.fetchSuccess.bind(this), this.fetchError.bind(this))
-            // $.ajax({
-            //     type: 'DELETE',
-            //     url: `/users/${this.userId}/follow`,
-            //     dataType: 'json',
-            //     success: this.fetchSuccess.bind(this),
-            //     error: this.fetchError.bind(this)
-            // })
+            $.when(APIUtil.unfollowUser(this.userId))
+            .then(this.fetchSuccess.bind(this))
+            .fail(this.fetchError.bind(this));
+
         }
         
     }
